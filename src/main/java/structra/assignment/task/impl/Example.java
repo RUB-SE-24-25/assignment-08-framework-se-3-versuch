@@ -1,10 +1,16 @@
 package structra.assignment.task.impl;
 
 import structra.assignment.framework.llm.KeyProvider;
+import structra.assignment.framework.llm.gen.questions.OpenQuestionTarget;
+import structra.assignment.framework.llm.gen.questions.RandomTargetProvider;
+import structra.assignment.framework.llm.gen.questions.TargetProvider;
 import structra.assignment.framework.llm.model.Mimic;
+import structra.assignment.framework.model.question.base.Question;
 import structra.assignment.framework.provide.ModelQuestionProvider;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 import javax.swing.*;
 
@@ -14,10 +20,16 @@ public class Example{
      * Create the GUI and show it. For thread safety, this method should be invoked from the
      * event-dispatching thread.
      */
-    KeyProvider keyProvider = new keyProviderImplementation();
-    Mimic mimic = new Mimic(keyProvider);
-    ModelQuestionProvider modelQuestionProvider = new ModelQuestionProvider();
+
+
     private static void createAndShowGUI() {
+        //create Model and CompletableFuture
+        KeyProvider keyProvider = new keyProviderImplementation();
+        Mimic mimic = new Mimic(keyProvider);
+        TargetProvider provider = new RandomTargetProvider(new OpenQuestionTarget(Mimic.MULTIPLE_CHOICE));
+        ModelQuestionProvider modelQuestionProvider = new ModelQuestionProvider(mimic, provider, new ArrayList<>());
+        CompletableFuture<Question<?>> future = modelQuestionProvider.next();
+
         // Create and set up the window
         JFrame frame = new JFrame("HelloWorldSwing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,8 +39,8 @@ public class Example{
         frame.getContentPane().add(label);
 
         //Button
+        JButton button = new JButton("next");
 
-        JButton button = new JButton("next",modelQuestionProvider.next());
         // Adjust position of the window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double width = screenSize.getWidth();
