@@ -20,7 +20,9 @@ public class Example{
      * Create the GUI and show it. For thread safety, this method should be invoked from the
      * event-dispatching thread.
      */
-
+    private static JLabel questionLabel;
+    private static ModelQuestionProvider modelQuestionProvider;
+    private static CompletableFuture<Question<?>> future;
 
     private static void createAndShowGUI() {
         //create Model and CompletableFuture
@@ -34,12 +36,11 @@ public class Example{
         JFrame frame = new JFrame("HelloWorldSwing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Add the "Hello World" label to the center of the window
-        JLabel label = new JLabel("Hello World", SwingConstants.CENTER);
-        frame.getContentPane().add(label);
 
         //Button
-        JButton button = new JButton("next");
+        JButton button = new JButton("Next");
+        button.addActionListener(e -> loadNextQuestion());
+        frame.getContentPane().add(button, BorderLayout.SOUTH);
 
         // Adjust position of the window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -50,9 +51,34 @@ public class Example{
         frame.setLocation((int) (width - frameWidth) / 2, (int) (height - frameHeight) / 2);
         frame.setSize(frameWidth, frameHeight);
 
+
         // Display the window
         frame.setVisible(true);
+
+        // Load first question
+        loadNextQuestion();
     }
+
+    private static void loadNextQuestion() {
+        if (modelQuestionProvider == null) {
+            JOptionPane.showMessageDialog(null, "Model not initialised!");
+            return;
+        }
+
+
+        future.thenAccept(question -> SwingUtilities.invokeLater(() -> {
+            if (question != null) {
+                questionLabel.setText("Question Text: " + question.getText());
+            } else {
+                questionLabel.setText("No Question found.");
+            }
+        })).exceptionally(ex -> {
+            SwingUtilities.invokeLater(() -> questionLabel.setText("Error: " + ex.getMessage()));
+            return null;
+        });
+    }
+
+
 
     public static void main(String[] args) {
         // Schedule a job for the event-dispatching thread:
@@ -60,8 +86,4 @@ public class Example{
         javax.swing.SwingUtilities.invokeLater(Example::createAndShowGUI);
     }
 
-    @Override
-    public String getApiKey() {
-        return "structra-1343abnc-dGhpcyBpcyBub3Qgb3VyIGFwaSBrZXksIG5pY2UgdHJ5IHRobyA6KQ==";
-    }
 }
