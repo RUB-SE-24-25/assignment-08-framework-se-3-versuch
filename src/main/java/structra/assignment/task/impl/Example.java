@@ -2,17 +2,21 @@ package structra.assignment.task.impl;
 
 import structra.assignment.framework.llm.KeyProvider;
 import structra.assignment.framework.llm.model.Mimic;
+import structra.assignment.framework.provide.ModelQuestionProvider;
 
 import java.awt.*;
 
 import javax.swing.*;
 
-public class Example implements KeyProvider {
+public class Example{
 
     /**
      * Create the GUI and show it. For thread safety, this method should be invoked from the
      * event-dispatching thread.
      */
+    KeyProvider keyProvider = new keyProviderImplementation();
+    Mimic mimic = new Mimic(keyProvider);
+    ModelQuestionProvider modelQuestionProvider = new ModelQuestionProvider();
     private static void createAndShowGUI() {
         // Create and set up the window
         JFrame frame = new JFrame("HelloWorldSwing");
@@ -22,6 +26,9 @@ public class Example implements KeyProvider {
         JLabel label = new JLabel("Hello World", SwingConstants.CENTER);
         frame.getContentPane().add(label);
 
+        //Button
+
+        JButton button = new JButton("next",modelQuestionProvider.next());
         // Adjust position of the window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double width = screenSize.getWidth();
