@@ -1,10 +1,13 @@
 package structra.assignment.task.impl;
 
+import structra.assignment.framework.llm.KeyProvider;
+import structra.assignment.framework.llm.model.Mimic;
+
 import java.awt.*;
 
 import javax.swing.*;
 
-public class Example {
+public class Example implements KeyProvider {
 
     /**
      * Create the GUI and show it. For thread safety, this method should be invoked from the
@@ -36,5 +39,10 @@ public class Example {
         // Schedule a job for the event-dispatching thread:
         // creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(Example::createAndShowGUI);
+    }
+
+    @Override
+    public String getApiKey() {
+        return "structra-1343abnc-dGhpcyBpcyBub3Qgb3VyIGFwaSBrZXksIG5pY2UgdHJ5IHRobyA6KQ==";
     }
 }
