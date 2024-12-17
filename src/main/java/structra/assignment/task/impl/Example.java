@@ -26,20 +26,22 @@ public class Example{
 
     private static void createAndShowGUI() {
         //create Model and CompletableFuture
-        KeyProvider keyProvider = new keyProviderImplementation();
+        KeyProvider keyProvider = new KeyProviderImplementation();
         Mimic mimic = new Mimic(keyProvider);
         TargetProvider provider = new RandomTargetProvider(new OpenQuestionTarget(Mimic.MULTIPLE_CHOICE));
-        ModelQuestionProvider modelQuestionProvider = new ModelQuestionProvider(mimic, provider, new ArrayList<>());
-        CompletableFuture<Question<?>> future = modelQuestionProvider.next();
+        modelQuestionProvider = new ModelQuestionProvider(mimic, provider, new ArrayList<>());
+
+        future = modelQuestionProvider.next();
 
         // Create and set up the window
         JFrame frame = new JFrame("HelloWorldSwing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
+        questionLabel = new JLabel("Loading question...");
+        frame.getContentPane().add(questionLabel, BorderLayout.CENTER);
         //Button
         JButton button = new JButton("Next");
-        button.addActionListener(e -> loadNextQuestion());
+        button.addActionListener(e -> SwingUtilities.invokeLater(Example::loadNextQuestion));
         frame.getContentPane().add(button, BorderLayout.SOUTH);
 
         // Adjust position of the window
@@ -64,7 +66,7 @@ public class Example{
             JOptionPane.showMessageDialog(null, "Model not initialised!");
             return;
         }
-
+        future = modelQuestionProvider.next();
 
         future.thenAccept(question -> SwingUtilities.invokeLater(() -> {
             if (question != null) {
